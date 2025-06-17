@@ -44,7 +44,7 @@ st.markdown(
     }
     /* Title (st.title) */
     .stApp h1 {
-        color: #FF00FF !important;
+        color: #000080 !important;
         font-size: 40px !important;
         font-weight: bold !important;
     
@@ -58,7 +58,7 @@ st.markdown(
 
      /* Subheader (st.subheader) */
     .stApp h3 {
-        color: #FFA500 !important;  /* Orange tone for contrast */
+        color: #1560BD !important;  /* Denim tone for contrast */
         font-size: 26px !important;
         font-weight: bold !important;
         font-style: italic !important;
