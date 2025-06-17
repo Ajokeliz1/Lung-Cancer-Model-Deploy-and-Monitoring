@@ -1,6 +1,7 @@
 import streamlit as st
 import pickle
 import pandas as pd
+import seaborn as sns
 
 
 try:
@@ -261,3 +262,51 @@ st.sidebar.markdown("""
 - Medium: 30-70% probability  
 - High: 70-100% probability
 """)
+
+# Monitoring Dashboard Section
+if "prediction_log" not in st.session_state:
+    st.session_state["prediction_log"] = []
+    
+st.sidebar.header("Monitoring Dashboard")
+show_monitoring = st.sidebar.checkbox("Show Monitoring Dashboard")
+
+if show_monitoring:
+    st.subheader("Monitoring Dashboard")
+
+    if not st.session_state.prediction_log:
+        st.info("No predictions logged yet.")
+    else:
+        monitoring_df = pd.DataFrame(st.session_state.prediction_log)
+
+        st.write("Prediction Log:")
+        st.dataframe(monitoring_df)
+
+        st.subheader("Monitoring Statistics")
+
+        # Calculate and display basic statistics
+        total_predictions = len(monitoring_df)
+        st.metric("Total Predictions", total_predictions)
+
+        # Distribution of predicted risk levels
+        risk_level_counts = monitoring_df['predicted_risk_level'].value_counts().reindex(['Low', 'Medium', 'High']).fillna(0)
+        st.write("Distribution of Predicted Risk Levels:")
+        st.dataframe(risk_level_counts)
+
+        # Visualizations
+        st.subheader("Visualizations")
+
+        # Bar chart of predicted risk level distribution
+        fig_risk_distribution, ax_risk_distribution = plt.subplots()
+        sns.barplot(x=risk_level_counts.index, y=risk_level_counts.values, ax=ax_risk_distribution)
+        ax_risk_distribution.set_ylabel("Number of Predictions")
+        ax_risk_distribution.set_title("Predicted Risk Level Distribution")
+        st.pyplot(fig_risk_distribution)
+
+        if 'timestamp' in monitoring_df.columns:
+            monitoring_df['timestamp'] = pd.to_datetime(monitoring_df['timestamp'])
+            st.subheader("Air Pollution Trend Over Time")
+            fig_air_pollution_trend, ax_air_pollution_trend = plt.subplots()
+            sns.lineplot(x='timestamp', y='Air Pollution', data=monitoring_df, ax=ax_air_pollution_trend)
+            ax_air_pollution_trend.set_ylabel("Air Pollution Score")
+            ax_air_pollution_trend.set_title("Air Pollution Trend Over Time")
+            st.pyplot(fig_air_pollution_trend)
